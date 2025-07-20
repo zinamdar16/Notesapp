@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>Notes App</title></head>
+<body>
+  <h1>My Notes</h1>
+  <textarea id="note" placeholder="Write your note..."></textarea><br>
+  <button onclick="saveNote()">Save</button>
+  <h3>All Notes</h3>
+  <div id="notes"></div>
+
+  <script>
+    async function saveNote() {
+      const content = document.getElementById('note').value;
+      await fetch('/api/notes', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ content })
+      });
+      document.getElementById('note').value = '';
+      loadNotes();
+    }
+
+    async function loadNotes() {
+      const res = await fetch('/api/notes');
+      const notes = await res.json();
+      document.getElementById('notes').innerHTML = notes.map(n => `<p>${n.content}</p>`).join('');
+    }
+
+    loadNotes();
+  </script>
+</body>
+</html>
+
